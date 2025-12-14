@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAppState } from './hooks/useAppState';
 import { useTimer } from './hooks/useTimer';
 import type { AppMode, CustomLabel, Participant } from './types';
@@ -10,6 +10,112 @@ import './App.css';
 const Icon = ({ name, className = '' }: { name: string; className?: string }) => (
   <span className={`material-symbols-outlined ${className}`}>{name}</span>
 );
+
+// Bouncing Dots Component - DVD screensaver style
+interface Dot {
+  id: number;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  color: string;
+}
+
+const BouncingDots = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dots, setDots] = useState<Dot[]>([]);
+  const animationRef = useRef<number>();
+  const dotsRef = useRef<Dot[]>([]);
+
+  const colors = [
+    'rgba(19, 127, 236, 0.8)',
+    'rgba(6, 182, 212, 0.8)',
+    'rgba(19, 127, 236, 0.6)',
+    'rgba(6, 182, 212, 0.7)',
+    'rgba(14, 165, 233, 0.75)',
+  ];
+
+  const initDots = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    
+    const width = container.offsetWidth;
+    const height = container.offsetHeight;
+    
+    const newDots: Dot[] = Array.from({ length: 7 }, (_, i) => ({
+      id: i,
+      x: Math.random() * (width - 30),
+      y: Math.random() * (height - 30),
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2,
+      size: 8 + Math.random() * 20,
+      color: colors[i % colors.length],
+    }));
+    
+    dotsRef.current = newDots;
+    setDots(newDots);
+  }, []);
+
+  const animate = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    
+    const width = container.offsetWidth;
+    const height = container.offsetHeight;
+    
+    dotsRef.current = dotsRef.current.map(dot => {
+      let { x, y, vx, vy } = dot;
+      
+      x += vx;
+      y += vy;
+      
+      // Bounce off walls
+      if (x <= 0 || x >= width - dot.size) {
+        vx = -vx;
+        x = x <= 0 ? 0 : width - dot.size;
+      }
+      if (y <= 0 || y >= height - dot.size) {
+        vy = -vy;
+        y = y <= 0 ? 0 : height - dot.size;
+      }
+      
+      return { ...dot, x, y, vx, vy };
+    });
+    
+    setDots([...dotsRef.current]);
+    animationRef.current = requestAnimationFrame(animate);
+  }, []);
+
+  useEffect(() => {
+    initDots();
+    animationRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [initDots, animate]);
+
+  return (
+    <div ref={containerRef} className="bouncing-dots-container">
+      {dots.map(dot => (
+        <div
+          key={dot.id}
+          className="bouncing-dot"
+          style={{
+            left: dot.x,
+            top: dot.y,
+            width: dot.size,
+            height: dot.size,
+            background: dot.color,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 
 // --- Mode Selection Screen ---
 const ModeSelection = ({ onSelect }: { onSelect: (mode: AppMode) => void }) => {
@@ -463,6 +569,7 @@ const TrackerScreen = ({
       </header>
 
       <main className="tracker-content">
+        {!isTracking && <BouncingDots />}
         <div className="tracker-display">
           <div className="timer-display">
             <Icon name="timer" />
@@ -553,16 +660,13 @@ const TrackerScreen = ({
           </div>
         )}
 
-        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
-          {!isTracking && <div className="tracker-btn-dots" />}
-          <button 
-            onClick={isTracking ? handleFinish : handleStart}
-            className={`tracker-btn ${isTracking ? 'finish' : 'start'}`}
-          >
-            <Icon name={isTracking ? 'stop_circle' : 'play_arrow'} />
-            <span>{isTracking ? 'Finish Session' : 'Start Tracking'}</span>
-          </button>
-        </div>
+        <button 
+          onClick={isTracking ? handleFinish : handleStart}
+          className={`tracker-btn ${isTracking ? 'finish' : 'start'}`}
+        >
+          <Icon name={isTracking ? 'stop_circle' : 'play_arrow'} />
+          <span>{isTracking ? 'Finish Session' : 'Start Tracking'}</span>
+        </button>
 
         {mode === 'business' && isTracking && participants.length > 0 && (
           <div className="participants-indicator">
