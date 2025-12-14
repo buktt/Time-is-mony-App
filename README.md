@@ -1,73 +1,90 @@
-# React + TypeScript + Vite
+# ⏱️ Time is Money
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Progressive Web App (PWA) for tracking earnings and costs based on time spent.
 
-Currently, two official plugins are available:
+## 🌐 Live App
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**https://cosmic-llama-242743.netlify.app**
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📱 Install on Your Phone
 
-## Expanding the ESLint configuration
+### Android (Chrome):
+1. Open the link above in Chrome
+2. Tap **⋮ menu** → **"Install app"** or **"Add to Home Screen"**
+3. Done! Works offline!
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### iPhone (Safari):
+1. Open the link above in Safari
+2. Tap **Share (□↑)** → **"Add to Home Screen"**
+3. Done! Works offline!
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## ✨ Features
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **Dual Mode**: Personal & Business tracking
+- **Real-time earnings display**: Watch your money grow as time passes
+- **Multi-participant selection**: Select multiple team members for business sessions
+- **Custom labels**: Organize activities with colored labels
+- **Activity log**: Full history with filtering by mode and labels
+- **Offline support**: Works completely offline after installation
+- **Currency support**: USD, EUR, GBP, ILS, JPY, and more
+
+---
+
+## 🚀 Redeployment Instructions
+
+### Quickest Way - Netlify Drop (2 minutes, no account needed):
+
+1. Open: https://app.netlify.com/drop
+2. Drag the `dist` folder onto the page
+3. Get a permanent URL like `https://your-app.netlify.app`
+4. Install on phone - works offline forever!
+
+### Build the dist folder first:
+```bash
+npm install
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🛠️ Development
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Install dependencies
+```bash
+npm install
 ```
+
+### Run development server
+```bash
+npm run dev
+```
+
+### Build for production
+```bash
+npm run build
+```
+
+### Preview production build
+```bash
+npm run preview
+```
+
+---
+
+## 📁 Tech Stack
+
+- **React 19** + TypeScript
+- **Vite** for fast builds
+- **PWA** with Workbox for offline support
+- **localStorage** for data persistence
+- **Manrope** font + Material Symbols icons
+
+---
+
+## 📄 License
+
+MIT
