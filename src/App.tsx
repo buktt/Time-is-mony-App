@@ -312,7 +312,8 @@ const TrackerScreen = ({
   onStart,
   onFinish,
   goToLog,
-  goToSettings
+  goToSettings,
+  goToModeSelection
 }: {
   mode: AppMode;
   currency: string;
@@ -324,6 +325,7 @@ const TrackerScreen = ({
   onFinish: () => void;
   goToLog: () => void;
   goToSettings: () => void;
+  goToModeSelection: () => void;
 }) => {
   const [activityName, setActivityName] = useState('');
   const [selectedLabelId, setSelectedLabelId] = useState<string | null>(null);
@@ -385,9 +387,14 @@ const TrackerScreen = ({
         </button>
         <div className="flex flex-col items-center">
           <h2 className="screen-title">Activity Tracker</h2>
-          <span className={`mode-tag ${mode}`}>
+          <button 
+            onClick={isTracking ? undefined : goToModeSelection} 
+            className={`mode-tag ${mode} ${!isTracking ? 'clickable' : ''}`}
+            disabled={isTracking}
+          >
             {mode === 'personal' ? 'Personal' : 'Business'} Mode
-          </span>
+            {!isTracking && <Icon name="swap_horiz" className="mode-switch-icon" />}
+          </button>
         </div>
         <button onClick={goToLog} className="icon-button">
           <Icon name="history" />
@@ -820,6 +827,7 @@ function App() {
         onFinish={handleFinishTracking}
         goToLog={() => setView('log')}
         goToSettings={() => setView('setup')}
+        goToModeSelection={() => setView('selection')}
       />
     );
   }
