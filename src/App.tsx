@@ -553,13 +553,16 @@ const TrackerScreen = ({
           </div>
         )}
 
-        <button 
-          onClick={isTracking ? handleFinish : handleStart}
-          className={`tracker-btn ${isTracking ? 'finish' : 'start'}`}
-        >
-          <Icon name={isTracking ? 'stop_circle' : 'play_arrow'} />
-          <span>{isTracking ? 'Finish Session' : 'Start Tracking'}</span>
-        </button>
+        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+          {!isTracking && <div className="tracker-btn-dots" />}
+          <button 
+            onClick={isTracking ? handleFinish : handleStart}
+            className={`tracker-btn ${isTracking ? 'finish' : 'start'}`}
+          >
+            <Icon name={isTracking ? 'stop_circle' : 'play_arrow'} />
+            <span>{isTracking ? 'Finish Session' : 'Start Tracking'}</span>
+          </button>
+        </div>
 
         {mode === 'business' && isTracking && participants.length > 0 && (
           <div className="participants-indicator">

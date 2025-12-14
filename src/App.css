@@ -648,6 +648,7 @@
 .activity-input-wrapper {
   position: relative;
   margin-bottom: 1rem;
+  z-index: 5;
 }
 
 .activity-input-icon {
@@ -816,10 +817,19 @@
   border: none;
   cursor: pointer;
   position: relative;
+  z-index: 2;
+  isolation: isolate;
 }
 
 .tracker-btn .material-symbols-outlined {
   font-size: 3rem;
+  position: relative;
+  z-index: 2;
+}
+
+.tracker-btn span {
+  position: relative;
+  z-index: 2;
 }
 
 .tracker-btn.start {
@@ -832,36 +842,66 @@
   animation: splat-morph 6s ease-in-out infinite;
 }
 
-/* Splat decorative dots - positioned to not overlap text */
-.tracker-btn.start::before {
-  content: '';
+/* Splat decorative dots - positioned around the button */
+.tracker-btn-dots {
   position: absolute;
-  width: 16px;
-  height: 16px;
-  background: linear-gradient(135deg, #137fec 0%, #0ea5e9 100%);
-  border-radius: 50%;
-  top: -20px;
-  right: 20%;
-  box-shadow: 
-    -180px 80px 0 8px rgba(19, 127, 236, 0.9),
-    100px -10px 0 5px rgba(6, 182, 212, 0.8);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   pointer-events: none;
   z-index: 1;
 }
 
-.tracker-btn.start::after {
+.tracker-btn-dots::before {
   content: '';
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #137fec 0%, #0ea5e9 100%);
+  border-radius: 50%;
+  top: -20px;
+  right: 30px;
+  box-shadow: 
+    /* Tight cluster - top area */
+    -20px 5px 0 12px rgba(6, 182, 212, 0.85),
+    -40px -5px 0 5px rgba(19, 127, 236, 0.75),
+    -55px 12px 0 8px rgba(6, 182, 212, 0.7),
+    /* Left side cluster */
+    -95px 30px 0 14px rgba(6, 182, 212, 0.75),
+    -85px 50px 0 6px rgba(19, 127, 236, 0.65),
+    /* Farther dot */
+    55px 30px 0 10px rgba(19, 127, 236, 0.6);
+  pointer-events: none;
+}
+
+.tracker-btn-dots::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
   background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
   border-radius: 50%;
   bottom: -15px;
-  right: -10px;
+  left: 0px;
   box-shadow: 
-    -320px 20px 0 6px rgba(19, 127, 236, 0.85);
+    /* Tight cluster - bottom left */
+    20px 8px 0 14px rgba(19, 127, 236, 0.85),
+    40px 15px 0 6px rgba(6, 182, 212, 0.75),
+    15px 25px 0 4px rgba(19, 127, 236, 0.7),
+    /* Bottom center cluster */
+    80px 22px 0 11px rgba(6, 182, 212, 0.75),
+    100px 35px 0 5px rgba(19, 127, 236, 0.65),
+    /* Farther dots */
+    160px 10px 0 15px rgba(19, 127, 236, 0.55),
+    140px 45px 0 7px rgba(6, 182, 212, 0.6);
   pointer-events: none;
-  z-index: 1;
+}
+
+/* Remove old pseudo-elements from button */
+.tracker-btn.start::before,
+.tracker-btn.start::after {
+  display: none;
 }
 
 @keyframes splat-morph {

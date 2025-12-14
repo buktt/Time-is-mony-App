@@ -5,6 +5,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vite.dev/config/
 export default defineConfig({
   base: '/',
+  server: {
+    host: true, // Expose to network for testing on phone
+  },
   plugins: [
     react(),
     VitePWA({
