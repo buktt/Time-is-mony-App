@@ -63,16 +63,10 @@ export interface AppState {
 
 // Default currencies
 export const CURRENCIES: Currency[] = [
+  { code: 'ILS', symbol: '₪', name: 'Israeli Shekel' },
   { code: 'USD', symbol: '$', name: 'US Dollar' },
   { code: 'EUR', symbol: '€', name: 'Euro' },
-  { code: 'GBP', symbol: '£', name: 'British Pound' },
-  { code: 'ILS', symbol: '₪', name: 'Israeli Shekel' },
-  { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
-  { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
-  { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
-  { code: 'CHF', symbol: 'Fr', name: 'Swiss Franc' },
-  { code: 'CNY', symbol: '¥', name: 'Chinese Yuan' },
-  { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
+  { code: 'NZD', symbol: 'NZ$', name: 'New Zealand Dollar' },
 ];
 
 // Default label colors

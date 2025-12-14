@@ -464,14 +464,14 @@ const TrackerScreen = ({
 
       <main className="tracker-content">
         <div className="tracker-display">
-          <h1 className="earnings-display">
-            {currencySymbol}{currentEarnings.toFixed(2)}
-          </h1>
-          
           <div className="timer-display">
             <Icon name="timer" />
             <span className="timer-value">{formatElapsedTime(elapsed)}</span>
           </div>
+          
+          <h1 className="earnings-display">
+            {currencySymbol}{currentEarnings.toFixed(2)}
+          </h1>
         </div>
 
         {!isTracking ? (

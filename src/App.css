@@ -555,10 +555,10 @@
   font-weight: 800;
   letter-spacing: 2rem;
   line-height: 4rem;
-  color: rgba(0, 0, 0, 0.02);
+  color: rgba(0, 0, 0, 0.04);
   white-space: nowrap;
   pointer-events: none;
-  animation: float-symbols 60s linear infinite;
+  animation: float-symbols 40s linear infinite;
   z-index: 0;
 }
 
@@ -573,10 +573,10 @@
   font-weight: 700;
   letter-spacing: 1.5rem;
   line-height: 3rem;
-  color: rgba(0, 0, 0, 0.015);
+  color: rgba(0, 0, 0, 0.03);
   white-space: nowrap;
   pointer-events: none;
-  animation: float-symbols-reverse 45s linear infinite;
+  animation: float-symbols-reverse 30s linear infinite;
   z-index: 0;
 }
 
@@ -620,27 +620,29 @@
   margin-bottom: 1.5rem;
 }
 
-.earnings-display {
-  font-size: 2.75rem;
-  font-weight: 800;
-  color: var(--color-text);
-  letter-spacing: -0.02em;
-  margin-bottom: 0.5rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.timer-display {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--color-text-muted);
-}
-
-.timer-value {
+.tracker-display .earnings-display {
   font-size: 1.5rem;
   font-weight: 500;
+  color: var(--color-text-muted);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tracker-display .timer-display {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text);
+  margin-bottom: 0.5rem;
+}
+
+.tracker-display .timer-value {
+  font-size: 2.75rem;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.05em;
+  color: var(--color-text);
 }
 
 .activity-input-wrapper {
@@ -803,11 +805,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  width: 90%;
-  max-width: 320px;
-  padding: 2rem 2.5rem;
-  font-size: 1.5rem;
+  gap: 1rem;
+  width: 95%;
+  max-width: 360px;
+  padding: 2.75rem 3rem;
+  font-size: 1.75rem;
   font-weight: 800;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   margin-top: 1.5rem;
@@ -817,7 +819,7 @@
 }
 
 .tracker-btn .material-symbols-outlined {
-  font-size: 2.5rem;
+  font-size: 3rem;
 }
 
 .tracker-btn.start {
