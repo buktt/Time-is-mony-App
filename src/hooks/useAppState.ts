@@ -82,7 +82,7 @@ export const useAppState = () => {
     setState(newState);
   }, []);
 
-  const finishSession = useCallback(() => {
+  const finishSession = useCallback((activityNameOverride?: string) => {
     const currentState = storage.loadState();
     const session = currentState.activeSession;
     
@@ -108,9 +108,12 @@ export const useAppState = () => {
 
     const amount = calculateAmount(durationMinutes, hourlyRate);
 
+    // Use override name if provided, otherwise use session name
+    const finalActivityName = activityNameOverride || session.activityName || 'Untitled Activity';
+
     const newState = storage.addActivity({
       mode: currentState.mode,
-      activityName: session.activityName || 'Untitled Activity',
+      activityName: finalActivityName,
       startTime: session.startTime,
       endTime,
       durationMinutes,

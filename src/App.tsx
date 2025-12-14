@@ -98,6 +98,8 @@ const SetupScreen = ({
   const [newLabelName, setNewLabelName] = useState('');
   const [selectedColor, setSelectedColor] = useState(LABEL_COLORS[0]);
   const [rateInput, setRateInput] = useState(personalRate.toString());
+  const [rateType, setRateType] = useState<'hourly' | 'monthly'>('hourly');
+  const [monthlyInput, setMonthlyInput] = useState('');
 
   const currencySymbol = CURRENCIES.find(c => c.code === currency)?.symbol || currency;
   const totalHourly = participants.reduce((acc, p) => acc + p.hourlyRate, 0);
@@ -121,6 +123,14 @@ const SetupScreen = ({
 
   const handleRateBlur = () => {
     onPersonalRateChange(parseFloat(rateInput) || 0);
+  };
+
+  const handleMonthlyBlur = () => {
+    const monthly = parseFloat(monthlyInput) || 0;
+    // Assuming 160 working hours per month (40 hrs/week * 4 weeks)
+    const hourly = monthly / 160;
+    setRateInput(hourly.toFixed(2));
+    onPersonalRateChange(hourly);
   };
 
   return (
@@ -170,18 +180,55 @@ const SetupScreen = ({
 
         {mode === 'personal' ? (
           <div className="setup-card flex-col">
-            <label className="text-xs font-bold uppercase text-slate-400 mb-2 block">Hourly Rate</label>
-            <div className="rate-input-wrapper">
-              <span className="rate-symbol">{currencySymbol}</span>
-              <input 
-                type="number" 
-                value={rateInput}
-                onChange={(e) => setRateInput(e.target.value)}
-                onBlur={handleRateBlur}
-                placeholder="0.00"
-                className="rate-input"
-              />
+            <div className="rate-type-toggle">
+              <button 
+                className={`rate-type-btn ${rateType === 'hourly' ? 'active' : ''}`}
+                onClick={() => setRateType('hourly')}
+              >
+                Hourly
+              </button>
+              <button 
+                className={`rate-type-btn ${rateType === 'monthly' ? 'active' : ''}`}
+                onClick={() => setRateType('monthly')}
+              >
+                Monthly
+              </button>
             </div>
+            
+            {rateType === 'hourly' ? (
+              <>
+                <label className="text-xs font-bold uppercase text-slate-400 mb-2 block">Hourly Rate</label>
+                <div className="rate-input-wrapper">
+                  <span className="rate-symbol">{currencySymbol}</span>
+                  <input 
+                    type="number" 
+                    value={rateInput}
+                    onChange={(e) => setRateInput(e.target.value)}
+                    onBlur={handleRateBlur}
+                    placeholder="0.00"
+                    className="rate-input"
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <label className="text-xs font-bold uppercase text-slate-400 mb-2 block">Monthly Salary</label>
+                <div className="rate-input-wrapper">
+                  <span className="rate-symbol">{currencySymbol}</span>
+                  <input 
+                    type="number" 
+                    value={monthlyInput}
+                    onChange={(e) => setMonthlyInput(e.target.value)}
+                    onBlur={handleMonthlyBlur}
+                    placeholder="0.00"
+                    className="rate-input"
+                  />
+                </div>
+                <p className="text-xs text-slate-400 mt-2">
+                  ≈ {currencySymbol}{(parseFloat(rateInput) || 0).toFixed(2)}/hr (based on 160 hrs/month)
+                </p>
+              </>
+            )}
           </div>
         ) : (
           <>
@@ -322,7 +369,7 @@ const TrackerScreen = ({
   labels: CustomLabel[];
   activeSession: { startTime: number; activityName: string; labelId: string | null; participantIds?: string[] } | null;
   onStart: (name: string, labelId: string | null, participantIds?: string[]) => void;
-  onFinish: () => void;
+  onFinish: (activityName?: string) => void;
   goToLog: () => void;
   goToSettings: () => void;
   goToModeSelection: () => void;
@@ -373,7 +420,18 @@ const TrackerScreen = ({
   };
 
   const handleFinish = () => {
-    onFinish();
+    // If no activity name was entered, prompt for one
+    if (!activeSession?.activityName || activeSession.activityName === 'Untitled Activity') {
+      const name = prompt('What were you working on?', '');
+      if (name && name.trim()) {
+        // Update the session name before finishing
+        onFinish(name.trim());
+      } else {
+        onFinish();
+      }
+    } else {
+      onFinish();
+    }
     setActivityName('');
     setSelectedLabelId(null);
     setSelectedParticipantIds([]);
@@ -403,11 +461,6 @@ const TrackerScreen = ({
 
       <main className="tracker-content">
         <div className="tracker-display">
-          <div className="rate-badge">
-            <span className="text-slate-500 text-xs font-bold uppercase tracking-wide mr-2">Rate</span>
-            <span className="text-slate-900 text-sm font-bold">{formatAmount(currentHourlyRate, currency)}/hr</span>
-          </div>
-          
           <h1 className="earnings-display">
             {currencySymbol}{currentEarnings.toFixed(2)}
           </h1>
@@ -785,8 +838,8 @@ function App() {
     startSession(activityName, labelId, participantIds);
   };
 
-  const handleFinishTracking = () => {
-    finishSession();
+  const handleFinishTracking = (activityName?: string) => {
+    finishSession(activityName);
     setView('log');
   };
 
