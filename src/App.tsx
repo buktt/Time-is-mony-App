@@ -11,6 +11,41 @@ const Icon = ({ name, className = '' }: { name: string; className?: string }) =>
   <span className={`material-symbols-outlined ${className}`}>{name}</span>
 );
 
+// Morphing Dots Component - Random positions each visit
+const MorphingDots = () => {
+  const [positions] = useState(() => [
+    // Dot 1 - bottom right area
+    { bottom: 15 + Math.random() * 10, right: 5 + Math.random() * 15 },
+    // Dot 2 - bottom left area  
+    { bottom: 5 + Math.random() * 12, left: 5 + Math.random() * 15 },
+    // Dot 3 - bottom center area
+    { bottom: 2 + Math.random() * 8, left: 35 + Math.random() * 20 },
+    // Dot 4 - mid-left area
+    { bottom: 10 + Math.random() * 15, left: 20 + Math.random() * 15 },
+  ]);
+
+  return (
+    <div className="morphing-dots-container">
+      <div 
+        className="morphing-dot morphing-dot-1" 
+        style={{ bottom: `${positions[0].bottom}%`, right: `${positions[0].right}%`, left: 'auto', top: 'auto' }}
+      />
+      <div 
+        className="morphing-dot morphing-dot-2" 
+        style={{ bottom: `${positions[1].bottom}%`, left: `${positions[1].left}%`, right: 'auto', top: 'auto' }}
+      />
+      <div 
+        className="morphing-dot morphing-dot-3" 
+        style={{ bottom: `${positions[2].bottom}%`, left: `${positions[2].left}%`, right: 'auto', top: 'auto' }}
+      />
+      <div 
+        className="morphing-dot morphing-dot-4" 
+        style={{ bottom: `${positions[3].bottom}%`, left: `${positions[3].left}%`, right: 'auto', top: 'auto' }}
+      />
+    </div>
+  );
+};
+
 // Bouncing Dots Component - DVD screensaver style
 interface Dot {
   id: number;
@@ -113,6 +148,51 @@ const BouncingDots = () => {
           }}
         />
       ))}
+    </div>
+  );
+};
+
+// --- Welcome Screen (First Time Users) ---
+const WelcomeScreen = ({ onContinue }: { onContinue: () => void }) => {
+  return (
+    <div className="welcome-screen">
+      <div className="welcome-bg-dot welcome-bg-dot-1" />
+      <div className="welcome-bg-dot welcome-bg-dot-2" />
+      <div className="welcome-bg-dot welcome-bg-dot-3" />
+      
+      <div className="welcome-content">
+        <div className="welcome-icon">💸</div>
+        <h1 className="welcome-title">Time is Money</h1>
+        <p className="welcome-tagline">See what your time is really worth</p>
+        
+        <div className="welcome-features">
+          <div className="welcome-mode-label">Business Mode</div>
+          <div className="welcome-feature">
+            <span className="welcome-feature-icon">🏢</span>
+            <span className="welcome-feature-text">
+              <strong>Too many people in that meeting?</strong> Watch the cost tick up in real-time
+            </span>
+          </div>
+          <div className="welcome-feature">
+            <span className="welcome-feature-icon">⏱️</span>
+            <span className="welcome-feature-text">
+              <strong>Bill by the hour?</strong> Track client time with zero hassle
+            </span>
+          </div>
+          
+          <div className="welcome-mode-label" style={{ marginTop: '1rem' }}>Personal Mode</div>
+          <div className="welcome-feature">
+            <span className="welcome-feature-icon">🚽</span>
+            <span className="welcome-feature-text">
+              <strong>Bathroom break?</strong> See how much you earned while... away 😜
+            </span>
+          </div>
+        </div>
+        
+        <button className="welcome-cta" onClick={onContinue}>
+          Let's Go! 🚀
+        </button>
+      </div>
     </div>
   );
 };
@@ -569,7 +649,12 @@ const TrackerScreen = ({
       </header>
 
       <main className="tracker-content">
-        {!isTracking && <BouncingDots />}
+        {!isTracking && (
+          <>
+            <BouncingDots />
+            <MorphingDots />
+          </>
+        )}
         <div className="tracker-display">
           <div className="timer-display">
             <Icon name="timer" />
@@ -924,7 +1009,16 @@ function App() {
     finishSession,
   } = useAppState();
 
-  const [view, setView] = useState<'selection' | 'setup' | 'tracker' | 'log'>('selection');
+  // Check if first visit
+  const isFirstVisit = !localStorage.getItem('time-is-money-welcomed');
+  const [view, setView] = useState<'welcome' | 'selection' | 'setup' | 'tracker' | 'log'>(
+    isFirstVisit ? 'welcome' : 'selection'
+  );
+
+  const handleWelcomeComplete = () => {
+    localStorage.setItem('time-is-money-welcomed', 'true');
+    setView('selection');
+  };
 
   // Handle initial load
   useEffect(() => {
@@ -952,6 +1046,10 @@ function App() {
     finishSession(activityName);
     setView('log');
   };
+
+  if (view === 'welcome') {
+    return <WelcomeScreen onContinue={handleWelcomeComplete} />;
+  }
 
   if (view === 'selection') {
     return <ModeSelection onSelect={handleModeSelect} />;
