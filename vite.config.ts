@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/Time-is-mony-App/',
+  base: '/',
   plugins: [
     react(),
     VitePWA({
