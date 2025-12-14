@@ -197,14 +197,20 @@ const WelcomeScreen = ({ onContinue }: { onContinue: () => void }) => {
   );
 };
 
+// --- Help Button Component ---
+const HelpButton = ({ onClick }: { onClick: () => void }) => (
+  <button onClick={onClick} className="help-button" title="What's this app about?">
+    ?
+  </button>
+);
+
 // --- Mode Selection Screen ---
 const ModeSelection = ({ onSelect, onShowWelcome }: { onSelect: (mode: AppMode) => void; onShowWelcome: () => void }) => {
   return (
     <div className="screen animate-fade-in">
+      <HelpButton onClick={onShowWelcome} />
       <div className="screen-header">
-        <button onClick={onShowWelcome} className="help-button" title="What's this app about?">
-          <span>❓</span>
-        </button>
+        <div className="w-10"></div>
         <h2 className="screen-title">Mode Selection</h2>
         <div className="w-10"></div>
       </div>
@@ -265,7 +271,8 @@ const SetupScreen = ({
   onAddLabel,
   onRemoveLabel,
   onContinue,
-  onBack
+  onBack,
+  onShowWelcome
 }: {
   mode: AppMode;
   currency: string;
@@ -280,6 +287,7 @@ const SetupScreen = ({
   onRemoveLabel: (id: string) => void;
   onContinue: () => void;
   onBack: () => void;
+  onShowWelcome: () => void;
 }) => {
   const [newMemberName, setNewMemberName] = useState('');
   const [newMemberRate, setNewMemberRate] = useState('');
@@ -323,6 +331,7 @@ const SetupScreen = ({
 
   return (
     <div className="screen animate-fade-in">
+      <HelpButton onClick={onShowWelcome} />
       <div className="screen-header">
         <button onClick={onBack} className="icon-button">
           <Icon name="chevron_left" />
@@ -551,7 +560,8 @@ const TrackerScreen = ({
   onFinish,
   goToLog,
   goToSettings,
-  goToModeSelection
+  goToModeSelection,
+  onShowWelcome
 }: {
   mode: AppMode;
   currency: string;
@@ -564,6 +574,7 @@ const TrackerScreen = ({
   goToLog: () => void;
   goToSettings: () => void;
   goToModeSelection: () => void;
+  onShowWelcome: () => void;
 }) => {
   const [activityName, setActivityName] = useState('');
   const [selectedLabelId, setSelectedLabelId] = useState<string | null>(null);
@@ -630,6 +641,7 @@ const TrackerScreen = ({
 
   return (
     <div className="screen animate-fade-in">
+      <HelpButton onClick={onShowWelcome} />
       <header className="tracker-header">
         <button onClick={goToSettings} className="icon-button">
           <Icon name="settings" />
@@ -782,7 +794,8 @@ const ActivityLogScreen = ({
   currency, 
   onBack, 
   onDelete,
-  onUpdateLabel
+  onUpdateLabel,
+  onShowWelcome
 }: {
   activities: any[];
   labels: CustomLabel[];
@@ -790,6 +803,7 @@ const ActivityLogScreen = ({
   onBack: () => void;
   onDelete: (id: string) => void;
   onUpdateLabel: (activityId: string, labelId: string | null) => void;
+  onShowWelcome: () => void;
 }) => {
   const [filter, setFilter] = useState<'all' | 'business' | 'personal' | 'labels'>('all');
   const [editingActivityId, setEditingActivityId] = useState<string | null>(null);
@@ -827,6 +841,7 @@ const ActivityLogScreen = ({
 
   return (
     <div className="screen animate-fade-in">
+      <HelpButton onClick={onShowWelcome} />
       <header className="log-header">
         <button onClick={onBack} className="icon-button">
           <Icon name="arrow_back" />
@@ -1073,6 +1088,7 @@ function App() {
         onRemoveLabel={deleteLabel}
         onContinue={() => setView('tracker')}
         onBack={() => setView('selection')}
+        onShowWelcome={() => setView('welcome')}
       />
     );
   }
@@ -1091,6 +1107,7 @@ function App() {
         goToLog={() => setView('log')}
         goToSettings={() => setView('setup')}
         goToModeSelection={() => setView('selection')}
+        onShowWelcome={() => setView('welcome')}
       />
     );
   }
@@ -1104,6 +1121,7 @@ function App() {
         onBack={() => setView('tracker')}
         onDelete={deleteActivity}
         onUpdateLabel={updateActivityLabel}
+        onShowWelcome={() => setView('welcome')}
       />
     );
   }
