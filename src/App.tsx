@@ -299,7 +299,10 @@ const SetupScreen = ({
 
         {/* Labels Section */}
         <div className="setup-card flex-col mt-6">
-          <label className="text-xs font-bold uppercase text-slate-400 mb-2 block">Add Labels (Optional)</label>
+          <div className="mb-3">
+            <label className="text-sm font-bold text-slate-900 block">Activity Labels</label>
+            <p className="text-xs text-slate-500">Create labels to organize and group your activities across all sessions</p>
+          </div>
           <input 
             type="text"
             value={newLabelName}
