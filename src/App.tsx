@@ -25,7 +25,7 @@ interface Dot {
 const BouncingDots = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dots, setDots] = useState<Dot[]>([]);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
   const dotsRef = useRef<Dot[]>([]);
 
   const colors = [
