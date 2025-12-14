@@ -204,6 +204,26 @@
   background: rgba(0, 0, 0, 0.05);
 }
 
+/* Help Button */
+.help-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.help-button:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: scale(1.1);
+}
+
 /* Primary Button */
 .primary-btn {
   width: 100%;

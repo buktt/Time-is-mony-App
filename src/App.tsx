@@ -198,11 +198,13 @@ const WelcomeScreen = ({ onContinue }: { onContinue: () => void }) => {
 };
 
 // --- Mode Selection Screen ---
-const ModeSelection = ({ onSelect }: { onSelect: (mode: AppMode) => void }) => {
+const ModeSelection = ({ onSelect, onShowWelcome }: { onSelect: (mode: AppMode) => void; onShowWelcome: () => void }) => {
   return (
     <div className="screen animate-fade-in">
       <div className="screen-header">
-        <div className="w-10"></div>
+        <button onClick={onShowWelcome} className="help-button" title="What's this app about?">
+          <span>❓</span>
+        </button>
         <h2 className="screen-title">Mode Selection</h2>
         <div className="w-10"></div>
       </div>
@@ -222,7 +224,7 @@ const ModeSelection = ({ onSelect }: { onSelect: (mode: AppMode) => void }) => {
               <span className="mode-badge personal"><Icon name="person" /></span>
               <h3 className="mode-card-title">Personal Mode</h3>
             </div>
-            <p className="mode-card-desc">Track costs, hobbies & personal projects</p>
+            <p className="mode-card-desc">Bathroom breaks, hobbies & fun tracking 😜</p>
             <button className="mode-card-action">
               Select <Icon name="arrow_forward" />
             </button>
@@ -238,7 +240,7 @@ const ModeSelection = ({ onSelect }: { onSelect: (mode: AppMode) => void }) => {
               <span className="mode-badge business"><Icon name="business_center" /></span>
               <h3 className="mode-card-title">Business Mode</h3>
             </div>
-            <p className="mode-card-desc">Track earnings, billable hours & clients</p>
+            <p className="mode-card-desc">Meetings, client billing & team costs 🏢</p>
             <button className="mode-card-action">
               Select <Icon name="arrow_forward" />
             </button>
@@ -1052,7 +1054,7 @@ function App() {
   }
 
   if (view === 'selection') {
-    return <ModeSelection onSelect={handleModeSelect} />;
+    return <ModeSelection onSelect={handleModeSelect} onShowWelcome={() => setView('welcome')} />;
   }
 
   if (view === 'setup') {
