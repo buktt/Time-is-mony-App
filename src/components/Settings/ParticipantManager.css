@@ -1,0 +1,77 @@
+.participant-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.participant-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rate-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rate-field .settings-input.rate {
+  width: 100px;
+}
+
+.rate-prefix {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.rate-field .rate-suffix {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.participant-avatar {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 50%;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.edit-rate {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.edit-input.small {
+  width: 70px;
+}
+
+.empty-participants {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.empty-participants p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.empty-participants span {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+

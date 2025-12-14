@@ -1,0 +1,59 @@
+.personal-rate-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.rate-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+}
+
+.rate-currency {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.rate-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  text-align: center;
+}
+
+.rate-input:focus {
+  outline: none;
+}
+
+.rate-input::-webkit-outer-spin-button,
+.rate-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.rate-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.rate-suffix {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.rate-hint {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.5;
+  margin: 0;
+}
+
