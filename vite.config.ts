@@ -4,6 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/Time-is-mony-App/',
   plugins: [
     react(),
     VitePWA({
@@ -17,7 +18,7 @@ export default defineConfig({
         background_color: '#f6f7f8',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
+        start_url: '/Time-is-mony-App/',
         icons: [
           {
             src: 'pwa-192x192.svg',
