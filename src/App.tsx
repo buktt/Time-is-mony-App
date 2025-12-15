@@ -180,7 +180,7 @@ const WelcomeScreen = ({ onContinue }: { onContinue: () => void }) => {
             </span>
           </div>
           
-          <div className="welcome-mode-label" style={{ marginTop: '1rem' }}>Personal Mode</div>
+          <div className="welcome-mode-label" style={{ marginTop: '0.75rem' }}>Personal Mode</div>
           <div className="welcome-feature">
             <span className="welcome-feature-icon">🚽</span>
             <span className="welcome-feature-text">
@@ -302,7 +302,9 @@ const SetupScreen = ({
 
   const handleAddMember = () => {
     if (newMemberName && newMemberRate) {
-      onAddParticipant(newMemberName, parseFloat(newMemberRate));
+      // Convert monthly salary to hourly rate (160 hours/month)
+      const hourlyRate = parseFloat(newMemberRate) / 160;
+      onAddParticipant(newMemberName, hourlyRate);
       setNewMemberName('');
       setNewMemberRate('');
     }
@@ -442,13 +444,13 @@ const SetupScreen = ({
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold uppercase text-slate-400 mb-1.5 block">Rate ({currencySymbol}/hr)</label>
+                  <label className="text-xs font-bold uppercase text-slate-400 mb-1.5 block">Monthly Salary ({currencySymbol})</label>
                   <input 
                     type="number"
                     value={newMemberRate}
                     onChange={(e) => setNewMemberRate(e.target.value)}
                     className="form-input"
-                    placeholder="0.00"
+                    placeholder="e.g. 5000"
                   />
                 </div>
                 <button onClick={handleAddMember} className="add-member-btn">
@@ -461,8 +463,8 @@ const SetupScreen = ({
               <>
                 <div className="total-card">
                   <div>
-                    <span className="text-xs text-slate-400 font-bold uppercase">Total Hourly Cost</span>
-                    <div className="text-2xl font-bold">{formatAmount(totalHourly, currency)}<span className="text-base font-normal text-slate-400">/hr</span></div>
+                    <span className="text-xs text-slate-400 font-bold uppercase">Total Monthly Cost</span>
+                    <div className="text-2xl font-bold">{formatAmount(totalHourly * 160, currency)}<span className="text-base font-normal text-slate-400">/mo</span></div>
                   </div>
                   <div className="total-card-icon">
                     <Icon name="functions" />
@@ -480,8 +482,8 @@ const SetupScreen = ({
                         <div className="font-bold text-slate-900 text-sm">{member.name}</div>
                       </div>
                       <div className="member-rate">
-                        <span className="font-bold text-slate-900">{formatAmount(member.hourlyRate, currency)}</span>
-                        <span className="text-xs text-slate-400">/hr</span>
+                        <span className="font-bold text-slate-900">{formatAmount(member.hourlyRate * 160, currency)}</span>
+                        <span className="text-xs text-slate-400">/mo</span>
                       </div>
                       <button onClick={() => onRemoveParticipant(member.id)} className="remove-btn">
                         <Icon name="remove_circle" />
@@ -549,6 +551,51 @@ const SetupScreen = ({
 };
 
 // --- Tracker Screen ---
+// Activity Name Modal Component
+const ActivityNameModal = ({ 
+  isOpen, 
+  onSubmit, 
+  onCancel 
+}: { 
+  isOpen: boolean; 
+  onSubmit: (name: string) => void; 
+  onCancel: () => void;
+}) => {
+  const [name, setName] = useState('');
+  
+  if (!isOpen) return null;
+  
+  const handleSubmit = () => {
+    onSubmit(name.trim() || 'Untitled Activity');
+    setName('');
+  };
+  
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h3 className="modal-title">What were you working on?</h3>
+        <input
+          type="text"
+          className="modal-input"
+          placeholder="Enter activity name..."
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          autoFocus
+          onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+        />
+        <div className="modal-buttons">
+          <button className="modal-btn secondary" onClick={onCancel}>
+            Skip
+          </button>
+          <button className="modal-btn primary" onClick={handleSubmit}>
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const TrackerScreen = ({ 
   mode, 
   currency, 
@@ -579,6 +626,8 @@ const TrackerScreen = ({
   const [activityName, setActivityName] = useState('');
   const [selectedLabelId, setSelectedLabelId] = useState<string | null>(null);
   const [selectedParticipantIds, setSelectedParticipantIds] = useState<string[]>([]);
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [participantDropdownOpen, setParticipantDropdownOpen] = useState(false);
   const elapsed = useTimer(activeSession?.startTime || null);
   const isTracking = activeSession !== null;
 
@@ -622,26 +671,30 @@ const TrackerScreen = ({
   };
 
   const handleFinish = () => {
-    // If no activity name was entered, prompt for one
+    // If no activity name was entered, show modal to ask for one
     if (!activeSession?.activityName || activeSession.activityName === 'Untitled Activity') {
-      const name = prompt('What were you working on?', '');
-      if (name && name.trim()) {
-        // Update the session name before finishing
-        onFinish(name.trim());
-      } else {
-        onFinish();
-      }
+      setShowNameModal(true);
     } else {
-      onFinish();
+      completeFinish();
     }
+  };
+
+  const completeFinish = (name?: string) => {
+    onFinish(name);
     setActivityName('');
     setSelectedLabelId(null);
     setSelectedParticipantIds([]);
+    setShowNameModal(false);
   };
 
   return (
     <div className="screen animate-fade-in">
       <HelpButton onClick={onShowWelcome} />
+      <ActivityNameModal 
+        isOpen={showNameModal}
+        onSubmit={(name) => completeFinish(name)}
+        onCancel={() => completeFinish()}
+      />
       <header className="tracker-header">
         <button onClick={goToSettings} className="icon-button">
           <Icon name="settings" />
@@ -695,30 +748,48 @@ const TrackerScreen = ({
 
             {/* Participant selector for Business mode */}
             {mode === 'business' && participants.length > 0 && (
-              <div className="participant-selector">
-                <p className="selector-label">Select Participants:</p>
-                <div className="participant-chips">
-                  {participants.map((participant) => (
-                    <button
-                      key={participant.id}
-                      className={`participant-chip ${selectedParticipantIds.includes(participant.id) ? 'selected' : ''}`}
-                      onClick={() => toggleParticipant(participant.id)}
-                    >
-                      <span className="participant-chip-avatar">
-                        {participant.name.substring(0, 2).toUpperCase()}
-                      </span>
-                      <span className="participant-chip-name">{participant.name}</span>
-                      <span className="participant-chip-rate">{formatAmount(participant.hourlyRate, currency)}/hr</span>
-                      {selectedParticipantIds.includes(participant.id) && (
-                        <Icon name="check_circle" className="participant-chip-check" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-                {selectedParticipantIds.length > 0 && (
-                  <p className="selected-count">
-                    {selectedParticipantIds.length} selected • Total: {formatAmount(currentHourlyRate, currency)}/hr
-                  </p>
+              <div className={`participant-selector dropdown ${participantDropdownOpen ? 'open' : ''}`}>
+                <button 
+                  className="dropdown-header"
+                  onClick={() => setParticipantDropdownOpen(!participantDropdownOpen)}
+                >
+                  <div className="dropdown-header-content">
+                    <Icon name="group" className="dropdown-icon" />
+                    <span className="dropdown-label">
+                      {selectedParticipantIds.length === 0 
+                        ? 'Select Participants' 
+                        : `${selectedParticipantIds.length} participant${selectedParticipantIds.length > 1 ? 's' : ''} selected`}
+                    </span>
+                  </div>
+                  <Icon name={participantDropdownOpen ? 'expand_less' : 'expand_more'} className="dropdown-arrow" />
+                </button>
+                
+                {participantDropdownOpen && (
+                  <div className="dropdown-content">
+                    <div className="participant-chips">
+                      {participants.map((participant) => (
+                        <button
+                          key={participant.id}
+                          className={`participant-chip ${selectedParticipantIds.includes(participant.id) ? 'selected' : ''}`}
+                          onClick={() => toggleParticipant(participant.id)}
+                        >
+                          <span className="participant-chip-avatar">
+                            {participant.name.substring(0, 2).toUpperCase()}
+                          </span>
+                          <span className="participant-chip-name">{participant.name}</span>
+                          <span className="participant-chip-rate">{formatAmount(participant.hourlyRate * 160, currency)}/mo</span>
+                          {selectedParticipantIds.includes(participant.id) && (
+                            <Icon name="check_circle" className="participant-chip-check" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                    {selectedParticipantIds.length > 0 && (
+                      <p className="selected-count">
+                        Total: {formatAmount(currentHourlyRate * 160, currency)}/mo
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
             )}
@@ -767,17 +838,20 @@ const TrackerScreen = ({
           <span>{isTracking ? 'Finish Session' : 'Start Tracking'}</span>
         </button>
 
-        {mode === 'business' && isTracking && participants.length > 0 && (
+        {mode === 'business' && isTracking && activeSession?.participantIds && activeSession.participantIds.length > 0 && (
           <div className="participants-indicator">
             <p className="text-xs font-bold text-slate-400 uppercase mb-3">Active Participants</p>
             <div className="participants-avatars">
-              {participants.slice(0, 4).map((m) => (
-                <div key={m.id} className="participant-avatar" title={m.name}>
-                  {m.name.substring(0,2).toUpperCase()}
-                </div>
-              ))}
-              {participants.length > 4 && (
-                <div className="participant-avatar more">+{participants.length - 4}</div>
+              {participants
+                .filter(p => activeSession.participantIds?.includes(p.id))
+                .slice(0, 4)
+                .map((m) => (
+                  <div key={m.id} className="participant-avatar" title={m.name}>
+                    {m.name.substring(0,2).toUpperCase()}
+                  </div>
+                ))}
+              {activeSession.participantIds.length > 4 && (
+                <div className="participant-avatar more">+{activeSession.participantIds.length - 4}</div>
               )}
             </div>
           </div>
@@ -824,13 +898,24 @@ const ActivityLogScreen = ({
   const getLabelById = (id: string | null) => labels.find(l => l.id === id);
 
   // Group by labels
-  const labelGroups = activities.reduce((acc: Record<string, { amount: number; count: number }>, a) => {
+  const labelGroups = activities.reduce((acc: Record<string, { amount: number; count: number; duration: number }>, a) => {
     const key = a.labelId || 'unlabeled';
-    if (!acc[key]) acc[key] = { amount: 0, count: 0 };
+    if (!acc[key]) acc[key] = { amount: 0, count: 0, duration: 0 };
     acc[key].amount += a.amount;
     acc[key].count += 1;
+    acc[key].duration += a.duration || 0;
     return acc;
   }, {});
+
+  const formatDuration = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+    return `${minutes}m`;
+  };
 
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
@@ -899,7 +984,7 @@ const ActivityLogScreen = ({
                       <h4 className={`font-bold ${label ? 'text-slate-900' : 'text-slate-500 italic'}`}>
                         {label ? label.name : 'Unlabeled'}
                       </h4>
-                      <p className="text-xs text-slate-500">{data.count} sessions</p>
+                      <p className="text-xs text-slate-500">{data.count} sessions • {formatDuration(data.duration)}</p>
                     </div>
                   </div>
                   <div className="log-entry-right">
