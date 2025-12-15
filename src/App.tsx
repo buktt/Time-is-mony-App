@@ -3,7 +3,7 @@ import { useAppState } from './hooks/useAppState';
 import { useTimer } from './hooks/useTimer';
 import type { AppMode, CustomLabel, Participant } from './types';
 import { CURRENCIES, LABEL_COLORS } from './types';
-import { formatDuration, formatAmount, formatElapsedTime } from './utils/calculations';
+import { formatAmount, formatElapsedTime } from './utils/calculations';
 import './App.css';
 
 // Icon component for Material Symbols
